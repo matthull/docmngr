@@ -2,12 +2,28 @@ import pytest
 
 from rest_framework.test import APIClient
 
-from docmngr.models import Document, Folder
+from docmngr.models import Document, Folder, Topic
 
 
 @pytest.fixture
 def api_client():
     return APIClient()
+
+
+@pytest.fixture
+def topic_1(transactional_db):
+    topic = Topic(name="first topic")
+    topic.save()
+
+    return topic
+
+
+@pytest.fixture
+def topic_2(transactional_db):
+    topic = Topic(name="second topic")
+    topic.save()
+
+    return topic
 
 
 @pytest.fixture
@@ -36,9 +52,11 @@ def deleted_folder(transactional_db, parent_folder):
 
 
 @pytest.fixture
-def document_1(transactional_db, parent_folder):
+def document_1(transactional_db, parent_folder, topic_1):
     document = Document(title="doc1", folder=parent_folder)
     document.save()
+
+    document.topics.add(topic_1)
 
     return document
 

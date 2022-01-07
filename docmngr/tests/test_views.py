@@ -110,7 +110,6 @@ def test_tries_to_rename_deleted_folder(api_client, deleted_folder):
 # ### Document API Tests ###
 # ##########################
 @pytest.mark.django_db(transaction=True)
-@pytest.mark.wip
 def test_gets_document(api_client, document_1):
     pk = document_1.id
     response = api_client.get(f"/documents/{pk}/", format="json")
@@ -123,14 +122,12 @@ def test_gets_document(api_client, document_1):
 
 
 @pytest.mark.django_db(transaction=True)
-@pytest.mark.wip
 def test_fails_to_get_nonexistent_document(api_client):
     response = api_client.get("/documents/999/", format="json")
     assert response.status_code == 404
 
 
 @pytest.mark.django_db(transaction=True)
-@pytest.mark.wip
 def test_fails_to_get_deleted_document(api_client, deleted_document):
     pk = deleted_document.id
     response = api_client.get(f"/documents/{pk}/", format="json")
@@ -185,3 +182,37 @@ def test_tries_to_move_not_existing_document(api_client):
 # ##########################
 # ###   Topic API Tests  ###
 # ##########################
+@pytest.mark.django_db(transaction=True)
+def test_gets_topic(api_client, topic_1):
+    pk = topic_1.id
+    response = api_client.get(f"/topics/{pk}/", format="json")
+    assert response.status_code == 200
+
+    topic = response.data
+
+    # Make sure deleted folder was excluded.
+    assert topic["name"] == "first topic"
+
+
+@pytest.mark.django_db(transaction=True)
+def test_add_document_to_topic(api_client, document_1, topic_1, topic_2):
+    response = api_client.post(
+        f"/documents/{document_1.id}/topics/{topic_2.id}/", format="json"
+    )
+    assert response.status_code == 200
+    assert response.data["topics"][1]["name"] == "second topic"
+
+    updated_document = Document.objects.get(pk=response.data["id"])
+    assert updated_document.topics.all()[1].name == "second topic"
+
+
+@pytest.mark.django_db(transaction=True)
+def test_remove_topic_from_document(api_client, document_1, topic_1, topic_2):
+    response = api_client.delete(
+        f"/documents/{document_1.id}/topics/{topic_2.id}/", format="json"
+    )
+    assert response.status_code == 200
+    assert len(response.data["topics"]) == 1
+
+    updated_document = Document.objects.get(pk=response.data["id"])
+    assert len(updated_document.topics.all()) == 1

@@ -13,6 +13,24 @@ class BaseModel(models.Model):
 
 
 # #########################
+# ####     Topics       ###
+# #########################
+
+
+class Topic(BaseModel):
+    """"""
+
+    name = models.CharField(max_length=240, blank=False)
+    documents = models.ManyToManyField("Document", related_name="topics")
+
+
+class TopicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Topic
+        fields = ["id", "name"]
+
+
+# #########################
 # ####     Folders      ###
 # #########################
 
@@ -80,6 +98,16 @@ class Document(BaseModel):
 
 
 class DocumentSerializer(serializers.ModelSerializer):
+    topics = TopicSerializer(many=True, required=False)
+
     class Meta:
         model = Document
-        fields = ["id", "title", "content", "folder", "created_at", "updated_at"]
+        fields = [
+            "id",
+            "title",
+            "content",
+            "folder",
+            "topics",
+            "created_at",
+            "updated_at",
+        ]

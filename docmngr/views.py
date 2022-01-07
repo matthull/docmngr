@@ -1,24 +1,31 @@
-from abc import ABC, abstractmethod, abstractproperty
+from abc import ABC, abstractproperty
 
 from django.db.models import Q
 from django.http import Http404
 from rest_framework import status
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from docmngr.models import Document, DocumentSerializer, Folder, FolderSerializer
+from docmngr.models import (
+    Document,
+    DocumentSerializer,
+    Folder,
+    FolderSerializer,
+    Topic,
+    TopicSerializer,
+)
 
 
 class BaseView(APIView, ABC):
     """This base view contains the common logic that's used across various concrete views."""
 
-    @staticmethod
-    @abstractmethod
-    def _get_objects():
+    def _get_objects(self):
         """Get a queryset for the main model this view does CRUD on.
 
         Should return a Django QuerySet.
         """
+        return self.model_class.objects
 
     @staticmethod
     @abstractproperty
@@ -124,3 +131,41 @@ class DocumentsView(BaseView):
         serializer = self.serializer_class(document)
 
         return Response(serializer.data)
+
+
+class TopicsView(BaseView):
+    model_class = Topic
+    serializer_class = TopicSerializer
+
+    def _get_topic(self, request, pk):
+        """Gets a single topic."""
+        try:
+            topic = self._get_objects().get(pk=pk)
+        except self.model_class.DoesNotExist:
+            raise Http404
+
+        serializer = self.serializer_class(topic)
+
+        return Response(serializer.data)
+
+    def get(self, request, pk):
+        if pk is not None:
+            return self._get_topic(request, pk)
+        else:
+            return self._get_all_topics(request)
+
+
+@api_view(["POST", "DELETE"])
+def add_topic_to_document(request, document_pk, topic_pk):
+    """Add or remove a document from a topic."""
+    document = Document.objects.get(pk=document_pk)
+
+    if request.method == "POST":
+        document.topics.add(topic_pk)
+    else:
+        document.topics.remove(topic_pk)
+
+    document.save()
+
+    serializer = DocumentSerializer(document)
+    return Response(serializer.data)

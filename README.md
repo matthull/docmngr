@@ -26,25 +26,17 @@ poetry install
 
 ## Requirements
 ### Use Cases
-- Get a folder along with its children
-- Create a folder
+- Get a folder along with its children *
+- Create a folder *
 - Delete a folder (only if empty)
-- Rename a folder
-- Create a document
-- Move a document to a different folder
-- Create a topic
+- Rename a folder *
+- Create a document *
+- Get a specific document *
+- Move a document to a different folder *
+- Create a topic *
 - Get a list of all topics
 - Add a document to a topic
 - Get all the documents for a topic
-
-#### Access list of Documents
-- Filter by Topic
-- With or without document content
-
-#### Access single Document
-
-# Testing
-This project uses pytest. To run tests: `poetry run pytest`
 
 ### Out of Scope
 #### Document history
