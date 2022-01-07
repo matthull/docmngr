@@ -18,7 +18,7 @@ class BaseModel(models.Model):
 
 
 class Topic(BaseModel):
-    """"""
+    """A descriptor that can be applied to multiple documents."""
 
     name = models.CharField(max_length=240, blank=False, unique=True)
     documents = models.ManyToManyField("Document", related_name="topics")
@@ -38,7 +38,7 @@ class TopicSerializer(serializers.ModelSerializer):
 class Folder(BaseModel):
     """Part of a nested hierarchy organizing documents."""
 
-    name = models.CharField(max_length=240, blank=False, unique=True, null=False)
+    name = models.CharField(max_length=240, blank=False, null=False)
     parent_folder = models.ForeignKey(
         "self", on_delete=models.CASCADE, null=True, related_name="children"
     )
@@ -54,6 +54,13 @@ class Folder(BaseModel):
         Example: Folder.without_deleted().filter(parent_folder=parent_folder)
         """
         return self.objects.filter(is_deleted=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["parent_folder_id", "name"], name="unique within parent"
+            )
+        ]
 
 
 class FolderSerializer(serializers.ModelSerializer):
@@ -93,7 +100,9 @@ class Document(BaseModel):
     updated_at = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=240, blank=False)
     content = models.TextField(blank=False)
-    folder = models.ForeignKey(Folder, on_delete=models.CASCADE)
+    folder = models.ForeignKey(
+        Folder, on_delete=models.CASCADE, related_name="documents"
+    )
     is_deleted = models.BooleanField(default=False)
 
 

@@ -195,6 +195,13 @@ def test_gets_topic(api_client, topic_1):
 
 
 @pytest.mark.django_db(transaction=True)
+def test_gets_all_topics(api_client, topic_1, topic_2):
+    response = api_client.get("/topics/", format="json")
+    assert response.status_code == 200
+    assert len(response.data) == 2
+
+
+@pytest.mark.django_db(transaction=True)
 def test_add_document_to_topic(api_client, document_1, topic_1, topic_2):
     response = api_client.post(
         f"/documents/{document_1.id}/topics/{topic_2.id}/", format="json"
@@ -216,3 +223,17 @@ def test_remove_topic_from_document(api_client, document_1, topic_1, topic_2):
 
     updated_document = Document.objects.get(pk=response.data["id"])
     assert len(updated_document.topics.all()) == 1
+
+
+@pytest.mark.django_db(transaction=True)
+def test_gets_docs_for_topic(api_client, topic_1, document_1):
+    response = api_client.get(f"/topics/{topic_1.id}/documents/", format="json")
+    assert response.status_code == 200
+    assert response.data[0]["title"] == "doc1"
+
+
+@pytest.mark.django_db(transaction=True)
+def test_gets_docs_for_folder(api_client, parent_folder, document_1):
+    response = api_client.get(f"/folders/{parent_folder.id}/documents/", format="json")
+    assert response.status_code == 200
+    assert response.data[0]["title"] == "doc1"

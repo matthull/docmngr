@@ -39,12 +39,14 @@ urlpatterns = [
     ),
     path("folders/", views.FoldersView.as_view()),
     path("folders/<int:pk>/", views.FoldersView.as_view()),
+    path("folders/<int:folder_pk>/documents/", views.get_documents_for_folder),
     path("documents/<int:pk>/", views.DocumentsView.as_view()),
     path("documents/", views.DocumentsView.as_view()),
     path("topics/<int:pk>/", views.TopicsView.as_view()),
+    path("topics/<int:topic_pk>/documents/", views.get_documents_for_topic),
     path("topics/", views.TopicsView.as_view()),
     path(
         "documents/<int:document_pk>/topics/<int:topic_pk>/",
-        views.add_topic_to_document,
+        views.modify_document_topics,
     ),
 ]

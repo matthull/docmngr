@@ -148,18 +148,31 @@ class TopicsView(BaseView):
 
         return Response(serializer.data)
 
-    def get(self, request, pk):
+    def _get_all_topics(self, request):
+        """Gets all topics."""
+        try:
+            topics = self._get_objects().all()
+        except self.model_class.DoesNotExist:
+            raise Http404
+
+        serializer = self.serializer_class(topics, many=True)
+
+        return Response(serializer.data)
+
+    def get(self, request, pk=None):
         if pk is not None:
             return self._get_topic(request, pk)
         else:
             return self._get_all_topics(request)
 
 
-@api_view([""])
 @api_view(["POST", "DELETE"])
-def add_topic_to_document(request, document_pk, topic_pk):
+def modify_document_topics(request, document_pk, topic_pk):
     """Add or remove a document from a topic."""
-    document = Document.objects.get(pk=document_pk)
+    try:
+        document = Document.objects.get(pk=document_pk)
+    except Document.DoesNotExist:
+        raise Http404
 
     if request.method == "POST":
         document.topics.add(topic_pk)
@@ -169,4 +182,22 @@ def add_topic_to_document(request, document_pk, topic_pk):
     document.save()
 
     serializer = DocumentSerializer(document)
+    return Response(serializer.data)
+
+
+@api_view(["GET"])
+def get_documents_for_topic(request, topic_pk):
+    """Get all documents for topic."""
+    topic = Topic.objects.prefetch_related("documents").get(pk=topic_pk)
+    documents = topic.documents
+    serializer = DocumentSerializer(documents, many=True)
+    return Response(serializer.data)
+
+
+@api_view(["GET"])
+def get_documents_for_folder(request, folder_pk):
+    """Get all documents for topic."""
+    folder = Folder.objects.prefetch_related("documents").get(pk=folder_pk)
+    documents = folder.documents
+    serializer = DocumentSerializer(documents, many=True)
     return Response(serializer.data)
