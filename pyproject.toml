@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "docmngr"
+version = "0.1.0"
+description = "API for managing docs (Spekit code challenge)"
+authors = ["Matthew Hull <hull.matt@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Django = "^4.0.1"
+djangorestframework = "^3.13.1"
+psycopg2 = "^2.9.3"
+
+[tool.poetry.dev-dependencies]
+black = "^21.12b0"
+pyproject-flake8 = "^0.0.1-alpha.2"
+pytest = "^6.2.5"
+pytest-watch = "^4.2.0"
+pytest-django = "^4.5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
