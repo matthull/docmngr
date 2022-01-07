@@ -1,7 +1,12 @@
+# Demo
+The app is deployed to https://young-caverns-47466.herokuapp.com
+Rudimentary API docs are found here: https://young-caverns-47466.herokuapp.com/swagger-ui/
+
 # Installation
 
 ## Prerequisites
 - poetry installed
+- Python 3.9 installed
 - Postgresql 13+ installed
 
 ## Setup
@@ -24,6 +29,16 @@ exit
 poetry install
 ```
 
+## Deploying
+```
+poetry export -f requirements.txt --output requirements.txt
+<commit changes>
+heroku run python manage.py migrate
+git push heroku main
+```
+
+## Running migrations remotely
+
 ## Requirements
 ### Use Cases
 - Get a folder along with its children *
@@ -35,29 +50,12 @@ poetry install
 - Move a document to a different folder *
 - Create a topic *
 - Get a list of all topics
-- Add a document to a topic
+- Add a document to a topic *
+- Remove a document from a topic *
 - Get all the documents for a topic
 
-### Out of Scope
-#### Document history
-It seems likely that users will make mistakes and need to roll back to previous document versions,
-but this seemed a little complicated to including in a code challenge.
-
-## Caveats
-
-### Performance
-#### Token Authentication
-This prototype uses DRF native token authentication which causes database lookups. This is bad juju when operating at non-trivial scale. JWT is probably the more correct solution.
-
-I stuck with DRF tokens for this prototype because it saves a good bit of effort on test development as properly generating JWT tokens in tests is non-trivial.
-
-#### Maintainability
-This prototype uses monolithic files e.g. `models.py` for all DB models, `serializers.py`, etc. This doesn't scale well for an "real" production app being maintained long term, but it's easy enough to reorganize later so I tend to use monolithic approach when prototyping absent some established structural conventions.
-
-#### Database Migrations
-I used Django's builtin DB migration facility, but have concerns about using it when scaling a company. It can produce migrations that cause outages e.g. creating an index non-concurrently. 
-
-It may be better to use a standalone migration system like flyway where migrations are explicitly defined in SQL to encourage mindfulness around migrations. Using the Django built in facilities has big maintainability benefits especially when scaling a team, but a non-standard solution like flyway can pay for the reduced ease of development by preventing service disruptions.
-
-# Notes
-- make sure to test unicode anywhere it needs to be supported: folder name, doc name, etc.
+# Parting Thoughts
+There's a few things I feel are questionable about this implementation:
+- The API design is probably not as convenient as it needs to be, or performant. For instance it might be better just to return the whole folder hierarchy in one call rather than expect the client to navigate through it level-by-level.
+- I used the pretty low-level `APIView` and `@api_view` which might not have resulted in the cleanest or idiomatic of code. For instance I reimplemented some features of `GenericAPIView.` I did this b/c I haven't done DRF or for that matter any API development from scratch in a long while, so wasn't really confident I could get up to speed on optimally using DRF facilities. Given more time I'd find some production code bases to study and understand best usage of the higher level abstractions like `ViewSet`s and `GenericAPIView`.
+- On the same note, I'm pretty sure I did not do the urls.py paths in the most DRY way.

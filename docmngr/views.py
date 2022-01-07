@@ -155,6 +155,7 @@ class TopicsView(BaseView):
             return self._get_all_topics(request)
 
 
+@api_view([""])
 @api_view(["POST", "DELETE"])
 def add_topic_to_document(request, document_pk, topic_pk):
     """Add or remove a document from a topic."""

@@ -20,7 +20,7 @@ class BaseModel(models.Model):
 class Topic(BaseModel):
     """"""
 
-    name = models.CharField(max_length=240, blank=False)
+    name = models.CharField(max_length=240, blank=False, unique=True)
     documents = models.ManyToManyField("Document", related_name="topics")
 
 
