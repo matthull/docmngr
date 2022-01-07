@@ -32,9 +32,19 @@ http POST $URL_ROOT/documents/ \
   content="It's a wild wild world..." \
   folder=2
 
+http POST $URL_ROOT/documents/ \
+  title="How to Find The Bathroom" \
+  content="Take a left at the water cooler..." \
+  folder=2
+
 http GET $URL_ROOT/folders/1/documents/
 http GET $URL_ROOT/folders/2/documents/
 
 # Put "How to sell" doc in sales topic
 http POST $URL_ROOT/documents/1/topics/1/
 http GET $URL_ROOT/documents/1/
+
+# Get all docs for HQ
+http GET $URL_ROOT/folders/2/documents/
+# Get only sales-related docs for HQ
+http GET "$URL_ROOT/folders/2/documents/?topic=1"
