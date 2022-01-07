@@ -203,6 +203,7 @@ def get_documents_for_folder(request, folder_pk):
 
     documents = folder.documents
     if topic_id is not None:
+        # Not sure what exact database interactions this triggers, but I suspect it is unhealthy.
         documents = documents.filter(topics__id=topic_id)
 
     serializer = DocumentSerializer(documents, many=True)
