@@ -98,6 +98,8 @@ class Document(BaseModel):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
+    # There maybe should be some uniqueness constraint on title,
+    # within folder maybe?
     title = models.CharField(max_length=240, blank=False)
     content = models.TextField(blank=False)
     folder = models.ForeignKey(
