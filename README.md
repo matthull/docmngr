@@ -1,5 +1,6 @@
 # Demo
 The app is deployed to https://young-caverns-47466.herokuapp.com
+
 Rudimentary API docs are found here: https://young-caverns-47466.herokuapp.com/swagger-ui/
 
 You can find example API interactions
@@ -39,12 +40,11 @@ heroku run python manage.py migrate
 git push heroku main
 ```
 
-## Running migrations remotely
-
 ## Requirements
 ### Use Cases
-- Get the top folders in the hierarchy
+#### Get the top folders in the hierarchy
 The client will use this to get the top folders, allowing the user to begin navigating downwards.
+
 - Get a folder along with its children *
 The client will use this to show the user the contents of a selected folder.
 - Create a folder *
