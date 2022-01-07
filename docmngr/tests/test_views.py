@@ -1,6 +1,6 @@
 import pytest
 
-from docmngr.models import Folder
+from docmngr.models import Document, Folder
 
 
 # #########################
@@ -34,13 +34,14 @@ def test_gets_top_folders(api_client, parent_folder, child_folder):
 
 
 @pytest.mark.django_db(transaction=True)
-def test_404_on_nonexistent_folder(api_client):
+def test_fails_to_get_nonexistent_folder(api_client):
     response = api_client.get("/folders/999/", format="json")
     assert response.status_code == 404
 
 
 @pytest.mark.django_db(transaction=True)
 def test_returns_empty_folder_list(api_client):
+    """Ensure that if no folders were created yet we just get an empty list."""
     response = api_client.get("/folders/", format="json")
     assert response.status_code == 200
     assert response.data == []
@@ -133,6 +134,51 @@ def test_fails_to_get_nonexistent_document(api_client):
 def test_fails_to_get_deleted_document(api_client, deleted_document):
     pk = deleted_document.id
     response = api_client.get(f"/documents/{pk}/", format="json")
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db(transaction=True)
+def test_creates_document(api_client, parent_folder):
+    document_data = {
+        "title": "foobar ✓",
+        "content": "quick brown dog",
+        "folder": parent_folder.id,
+    }
+    response = api_client.post("/documents/", document_data, format="json")
+    assert response.status_code == 201
+    assert response.data["title"] == "foobar ✓"
+    assert response.data["content"] == "quick brown dog"
+
+
+@pytest.mark.django_db(transaction=True)
+def test_fails_to_create_invalid_document(api_client, parent_folder):
+    document_data = {
+        "title": "foobar ✓",
+        "folder": parent_folder.id,
+    }
+    response = api_client.post("/documents/", document_data, format="json")
+    assert response.status_code == 400
+    assert response.data["content"][0].code == "required"
+
+
+@pytest.mark.django_db(transaction=True)
+def test_move_document(api_client, document_1, child_folder):
+    document_data = {"folder": child_folder.id}
+    response = api_client.put(
+        f"/documents/{document_1.id}/", document_data, format="json"
+    )
+    assert response.status_code == 200
+    assert response.data["folder"] == child_folder.id
+
+    updated_document = Document.objects.get(pk=response.data["id"])
+    assert updated_document.folder.id == child_folder.id
+
+
+@pytest.mark.django_db(transaction=True)
+def test_tries_to_move_not_existing_document(api_client):
+    document_data = {"title": "baz"}
+    response = api_client.put("/documents/999/", document_data, format="json")
+
     assert response.status_code == 404
 
 

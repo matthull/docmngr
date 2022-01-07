@@ -23,4 +23,5 @@ urlpatterns = [
     path("folders/", views.FoldersView.as_view()),
     path("folders/<int:pk>/", views.FoldersView.as_view()),
     path("documents/<int:pk>/", views.DocumentsView.as_view()),
+    path("documents/", views.DocumentsView.as_view()),
 ]
