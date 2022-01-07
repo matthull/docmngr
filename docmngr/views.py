@@ -1,5 +1,6 @@
 from abc import ABC, abstractproperty
 
+from django.db import IntegrityError
 from django.db.models import Q
 from django.http import Http404
 from rest_framework import status
@@ -47,10 +48,19 @@ class BaseView(APIView, ABC):
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
-            serializer.save()
+            try:
+                serializer.save()
+            # This is a hack to return a proper error when a custom model constraint
+            # error (such as the unique within constraint on folders.) This should be handled
+            # outside the view layer, in serializer probably.
+            except IntegrityError:
+                return Response(
+                    {"name": ["this name already exists"]},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk):
         """Change an object's attributes.
@@ -67,7 +77,13 @@ class BaseView(APIView, ABC):
         serializer = self.serializer_class(obj, data=request.data, partial=True)
 
         if serializer.is_valid():
-            serializer.save()
+            try:
+                serializer.save()
+            except IntegrityError:
+                return Response(
+                    {"name": ["this name already exists"]},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

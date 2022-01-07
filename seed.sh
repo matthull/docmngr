@@ -1,8 +1,9 @@
 #!/bin/bash
 
-URL_ROOT="https://young-caverns-47466.herokuapp.com"
+URL_ROOT="http://localhost:8000"
+#URL_ROOT="https://young-caverns-47466.herokuapp.com"
 
-http POST $URL_ROOT/folders/ name="VA Site"
+http POST $URL_ROOT/folders.json/ name="VA Site"
 http POST $URL_ROOT/folders/ name="Team 1" parent_folder=1
 http POST $URL_ROOT/folders/ name="Team 2" parent_folder=1
 http POST $URL_ROOT/folders/ name="Team 2 Night Shift" parent_folder=6
