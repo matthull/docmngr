@@ -3,7 +3,7 @@ The app is deployed to https://young-caverns-47466.herokuapp.com
 
 Rudimentary API docs are found here: https://young-caverns-47466.herokuapp.com/swagger-ui/
 
-You can find example API interactions
+You can find example API interactions in `seed.sh` as well as `docmngr/tests/test_views.py`.
 
 # Installation
 
