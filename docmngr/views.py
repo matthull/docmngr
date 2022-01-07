@@ -197,7 +197,13 @@ def get_documents_for_topic(request, topic_pk):
 @api_view(["GET"])
 def get_documents_for_folder(request, folder_pk):
     """Get all documents for topic."""
+    topic_id = request.query_params.get("topic")
+
     folder = Folder.objects.prefetch_related("documents").get(pk=folder_pk)
+
     documents = folder.documents
+    if topic_id is not None:
+        documents = documents.filter(topics__id=topic_id)
+
     serializer = DocumentSerializer(documents, many=True)
     return Response(serializer.data)

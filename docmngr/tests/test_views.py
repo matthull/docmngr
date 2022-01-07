@@ -237,3 +237,15 @@ def test_gets_docs_for_folder(api_client, parent_folder, document_1):
     response = api_client.get(f"/folders/{parent_folder.id}/documents/", format="json")
     assert response.status_code == 200
     assert response.data[0]["title"] == "doc1"
+
+
+@pytest.mark.django_db(transaction=True)
+def test_gets_docs_for_folder_and_topic(
+    api_client, parent_folder, topic_1, document_1, document_2
+):
+    response = api_client.get(
+        f"/folders/{parent_folder.id}/documents/?topic={topic_1.id}", format="json"
+    )
+    assert response.status_code == 200
+    assert len(response.data) == 1
+    assert response.data[0]["title"] == "doc1"

@@ -62,6 +62,14 @@ def document_1(transactional_db, parent_folder, topic_1):
 
 
 @pytest.fixture
+def document_2(transactional_db, parent_folder, topic_1):
+    document = Document(title="doc2", folder=parent_folder)
+    document.save()
+
+    return document
+
+
+@pytest.fixture
 def deleted_document(transactional_db, parent_folder):
     document = Document(title="byebye", folder=parent_folder, is_deleted=True)
     document.save()
