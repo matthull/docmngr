@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-x_0dy#y0je&(#x&1*$=#l-%^%-z!eq!_x4h=(q14y9-$%(i4uo"
+# SECRET_KEY = "django-insecure-x_0dy#y0je&(#x&1*$=#l-%^%-z!eq!_x4h=(q14y9-$%(i4uo"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -130,4 +130,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {"TEST_REQUEST_DEFAULT_FORMAT": "json"}
 import django_heroku
+
 django_heroku.settings(locals())
