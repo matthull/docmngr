@@ -43,25 +43,27 @@ git push heroku main
 ## Requirements
 ### Use Cases
 #### Get the top folders in the hierarchy
+
 The client will use this to get the top folders, allowing the user to begin navigating downwards.
 
-- Get a folder along with its children *
+#### Get a folder along with its children *
+
 The client will use this to show the user the contents of a selected folder.
-- Create a folder *
-- Delete a folder *
-- Rename a folder *
-- Create a document *
+#### Create a folder *
+#### Delete a folder *
+#### Rename a folder *
+#### Create a document *
 The client will use this to create a document within a folder.
-- Get summary of documents in a folder
+#### Get summary of documents in a folder
 The client will use this to show the 
-- Get a specific document *
+#### Get a specific document *
 The client will use this to get the full contents of a specified document.
-- Move a document to a different folder *
-- Create a topic *
-- Get a list of all topics
-- Add a document to a topic *
-- Remove a document from a topic *
-- Get all the documents for a topic
+#### Move a document to a different folder *
+#### Create a topic *
+#### Get a list of all topics
+#### Add a document to a topic *
+#### Remove a document from a topic *
+#### Get all the documents for a topic
 
 # Parting Thoughts
 There's a few things I feel are questionable about this implementation:
