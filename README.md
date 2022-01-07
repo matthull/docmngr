@@ -41,6 +41,9 @@ git push heroku main
 ```
 
 ## Requirements
+### Domain
+![Domain Diagram](/docmngr_domain.svg)
+
 ### Use Cases
 #### Get the top folders in the hierarchy
 
@@ -53,10 +56,13 @@ The client will use this to show the user the contents of a selected folder.
 #### Delete a folder *
 #### Rename a folder *
 #### Create a document *
+
 The client will use this to create a document within a folder.
 #### Get summary of documents in a folder
+
 The client will use this to show the 
 #### Get a specific document *
+
 The client will use this to get the full contents of a specified document.
 #### Move a document to a different folder *
 #### Create a topic *
@@ -64,6 +70,10 @@ The client will use this to get the full contents of a specified document.
 #### Add a document to a topic *
 #### Remove a document from a topic *
 #### Get all the documents for a topic
+
+### General Considerations
+- Unicode must be supported for text fields, people love their emojis
+- "Deleted" records should become invisible to the user, but still be accessible in the database for troubleshooting/restoration purposes
 
 # Parting Thoughts
 There's a few things I feel are questionable about this implementation:
